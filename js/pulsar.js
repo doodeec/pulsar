@@ -4,13 +4,16 @@
         color = { r: 255, g: 255, b: 255 },
         points = [],
         sizeX = 0,
-        sizeY = 0;
+        sizeY = 0,
+        reloadTimeout;
 
-    //set canvas width/height properties to fill document, and store dimensions
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    sizeX = canvas.width;
-    sizeY = canvas.height;
+    function resizeCanvas() {
+        //set canvas width/height properties to fill document, and store dimensions
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        sizeX = canvas.width;
+        sizeY = canvas.height;
+    }
 
     window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
         window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -82,7 +85,17 @@
         context.clearRect(0, 0, sizeX, sizeY);
     }
 
+    resizeCanvas();
     // generate point and kickoff animation loop
     points.push(new Point(Math.floor(sizeX/2), Math.floor(sizeY/2)));
     requestAnimationFrame(loop);
+
+    // update canvas size
+    window.addEventListener('resize', function() {
+        resizeCanvas();
+        clearTimeout(reloadTimeout);
+        reloadTimeout = setTimeout(function() {
+            points = [new Point(Math.floor(sizeX/2), Math.floor(sizeY/2))];
+        },500);
+    });
 })(this);
